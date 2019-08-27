@@ -2,17 +2,13 @@ package gui;
 
 import java.awt.*;
 import javax.swing.*;
-
-import data.entities.ai.SmartAnimal;
-import data.world.Position;
 import data.world.World;
 
 @SuppressWarnings("serial")
 public class MainFrame extends JFrame {
-	ImagePanel imagePanel;
-	
-	public MainFrame() {
-		imagePanel = new ImagePanel();
+		
+	public MainFrame(World world) {
+		ImagePanel imagePanel = new ImagePanel(world);
 		
 		Container cp = getContentPane();
 		cp.add(imagePanel);
@@ -27,17 +23,11 @@ public class MainFrame extends JFrame {
 		tk = Toolkit.getDefaultToolkit();
 		d = tk.getScreenSize();
 		
-		setSize(d.width / 2, d.height / 2);
+		setSize(d.width, d.height);
 		setLocation(0, 0);
 		  
 		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE );
 		setTitle("Environment Simulator");
 		setVisible(true);
-	}
-
-	public void runLifecycle(SmartAnimal animal) {
-		World world = new World();
-		world.addOrReplace(animal, new Position(animal, 10, 20));
-		imagePanel.runLifecycle(world, animal);
 	}
 }

@@ -4,25 +4,21 @@ import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.image.BufferedImage;
-import java.util.Set;
 import javax.swing.JPanel;
 import javax.swing.Timer;
-import data.entities.Entity;
-import data.entities.ai.SmartAnimal;
+
 import data.world.World;
 import util.ImageUtil;
 
 @SuppressWarnings("serial")
 public class ImagePanel extends JPanel implements ActionListener {
-	private static final int TICK = 50;
+	private static final int TICK = 100;
 	
 	private Timer timer;
 	private World world;
-	private SmartAnimal animal;
 	
-	public void runLifecycle(World world, SmartAnimal animal) {
+	public ImagePanel(World world) {
 		this.world = world;
-		this.animal = animal;
 		
 		// Start solver timer
 		timer = new Timer(TICK, this);
@@ -34,12 +30,7 @@ public class ImagePanel extends JPanel implements ActionListener {
 	
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		Set<Entity> processed = world.tick();
-		
-		if (animal.isDead() || !processed.contains(animal)) {
-			timer.stop();
-		}
-		
+		world.tick();
 		repaint();
 	}
 	

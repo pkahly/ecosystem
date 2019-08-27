@@ -7,10 +7,10 @@ import data.entities.animal.GeneticCode;
 import data.entities.animal.Carnivore;
 import data.entities.plant.Plant;
 import data.world.World;
-import gui.LegacyMainFrame;
+import gui.MainFrame;
 import util.RandomUtil;
 
-public class LegacyMain {
+public class Main {
 	private static final int HEIGHT = 100;
 	private static final int WIDTH = HEIGHT * 2;
 	
@@ -34,6 +34,6 @@ public class LegacyMain {
 			world.addOrReplace(new Carnivore(), RandomUtil.randPos(HEIGHT, WIDTH));
 		}
 		
-		new LegacyMainFrame(world);
+		new MainFrame(world);
 	}
 }
