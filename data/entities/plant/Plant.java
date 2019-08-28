@@ -20,7 +20,7 @@ public class Plant extends Entity {
 	
 	// Death and food value settings
 	private static final int DEATH_CHANCE_PER_AGE = 1;
-	private static final int BASE_ENERGY = 25;
+	private static final int BASE_ENERGY = 20;
 	
 	public Plant() {
 		super(Type.PLANT);
