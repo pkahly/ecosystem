@@ -9,35 +9,30 @@ import java.util.Set;
 
 import data.entities.Entity;
 import data.entities.Entity.Type;
-import data.entities.animal.Herbavore;
 import data.entities.animal.GeneticCode;
 import data.entities.plant.Plant;
 import util.RandomUtil;
 
 public class World {
-	private static final int HEIGHT = 20;
-	private static final int WIDTH = HEIGHT * 2;
+   // Probability of adding a plant to an empty square
 	private static final int REFOREST_CHANCE = 1;
-	private static final int NUM_PLANTS = 10;
 	
 	private int height;
 	private int width;
 	private Entity[][] worldArray;
 
-	public World() {
-		this(HEIGHT, WIDTH);
-		
-		for (int i = 0; i < NUM_PLANTS; i++) {
-			addOrReplace(new Plant(), RandomUtil.randPos(HEIGHT, WIDTH));
-		}
-	}
-	
+   /**
+   * Initialize an empty world of the given size
+   */
 	public World(int height, int width) {
 		this.height = height;
 		this.width = width;		
 		worldArray = new Entity[height][width];
 	}
 	
+	/**
+	* Loop over all of the entities in the world and call tick() on each
+	*/
 	public Set<Entity> tick() {
 		Set<Entity> processed = new HashSet<Entity>();
 		
@@ -58,22 +53,6 @@ public class World {
 		return processed;
 	}
 	
-	public Iterator<GeneticCode> getGeneticData() {
-		List<GeneticCode> genetics = new ArrayList<>();
-		
-		for (int row = 0; row < height; row++) {
-			for (int column = 0; column < width; column++) {
-				Entity entity = worldArray[row][column];
-				if (entity instanceof Herbavore) {
-					Herbavore animal = (Herbavore) entity;
-					genetics.add(animal.getGenetics());
-				}
-			}
-		}
-		
-		return genetics.iterator();
-	}
-	
 	public int width() {
 		return width;
 	}
@@ -81,7 +60,10 @@ public class World {
 	public int height() {
 		return height;
 	}
-
+   
+   /**
+	* Return the color of the entity at that location, or the background color if no entity
+	*/
 	public Color getColorValue(int row, int column) {
 		Entity entity = worldArray[row][column];
 		
@@ -91,11 +73,17 @@ public class World {
 		
 		return new Color(250, 250, 232);
 	}
-	
+
+   /**
+	* Updates the given Position object to contain the current entity at that location
+	*/
 	public Position getUpdatedPosition(Position pos) {
 		return getUpdatedPosition(pos.getRow(), pos.getColumn());
 	}
 	
+	/**
+	* Returns a Position object with the entity at the given location
+	*/
 	public Position getUpdatedPosition(int row, int column) {
 		if (!isValidPosition(row, column)) {
 			return null;
@@ -104,19 +92,27 @@ public class World {
 		return new Position(worldArray[row][column], row, column);
 	}
 	
-	
+	/**
+	* Add a new entity at the given position
+	*/
 	public void addOrReplace(Entity entity, Position pos) {
 		if (isValidPosition(pos)) {
 			worldArray[pos.getRow()][pos.getColumn()] = entity;
 		}
 	}
 	
+	/**
+	* Moves the entity in fromPos to toPos
+	*/
 	public void move(Position fromPos, Position toPos) {
 		if (isValidPosition(toPos)) {
 			addOrReplace(remove(fromPos), toPos);
 		}
 	}
 
+   /**
+	* Deletes the entity from the given position
+	*/
 	public Entity remove(Position pos) {
 		pos = getUpdatedPosition(pos);
 		Entity entity = pos.getEntity();
@@ -126,18 +122,26 @@ public class World {
 		return entity;
 	}
 
-	public List<Position> getNearbyPositionsOfType(Position center, int sensingDistance, Type type) {
+   /**
+	* Find the locations of any entities of the given type inside the given radius
+	*/
+	public List<Position> getNearbyPositionsOfType(Position center, int radius, Type type) {
 		List<Type> list = new ArrayList<>();
 		list.add(type);		
-		return getNearbyPositionsOfType(center, sensingDistance, list);
+		return getNearbyPositionsOfType(center, radius, list);
 	}
-	
-	public List<Position> getNearbyPositionsOfType(Position center, int sensingDistance, List<Type> types) {
-		int startRow = center.getRow() - sensingDistance;
-		int endRow = center.getRow() + sensingDistance;
-		int startCol = center.getColumn() - sensingDistance;
-		int endCol = center.getColumn() + sensingDistance;
+
+   /**
+	* Find the locations of any entities of the given types inside the given radius
+	*/	
+	public List<Position> getNearbyPositionsOfType(Position center, int radius, List<Type> types) {
+	   // Construct bounds of the search box
+		int startRow = center.getRow() - radius;
+		int endRow = center.getRow() + radius;
+		int startCol = center.getColumn() - radius;
+		int endCol = center.getColumn() + radius;
 		
+		// Search for entities of the given types
 		List<Position> nearbyPositions = new ArrayList<>();
 		for (int row = startRow; row <= endRow; row++) {
 			for (int col = startCol; col <= endCol; col++) {
@@ -153,10 +157,16 @@ public class World {
 		return nearbyPositions;
 	}
 	
+	/**
+	* Checks if the given Position is within the world's bounds
+	*/
 	private boolean isValidPosition(Position pos) {
 		return isValidPosition(pos.getRow(), pos.getColumn());
 	}
 	
+	/**
+	* Checks if the given coordinates are within the world's bounds
+	*/
 	private boolean isValidPosition(int row, int column) {
 		if (row < 0 || column < 0) {
 			return false;
@@ -167,36 +177,5 @@ public class World {
 		}
 		
 		return true;
-	}
-
-	public Herbavore findFirstAnimal() {
-		for (int row = 0; row < height; row++) {
-			for (int column = 0; column < width; column++) {
-				Entity entity = worldArray[row][column];
-				
-				if (entity instanceof Herbavore) {
-					return (Herbavore) entity;
-				}
-			}
-		}
-		
-		return null;
-	}
-
-	public Position getNearestObject(Position pos, int rowMod, int colMod) {
-		int row = pos.getRow() + rowMod;
-		int col = pos.getColumn() + colMod;
-		
-		while (isValidPosition(row, col)) {
-			Position newPos = getUpdatedPosition(row, col);
-			if (!newPos.isEmpty()) {
-				return newPos;
-			}
-			
-			row += rowMod;
-			col += colMod;
-		}
-		
-		return new Position(row, col, false, true); // Wall
 	}
 }

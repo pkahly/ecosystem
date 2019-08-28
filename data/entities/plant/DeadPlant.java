@@ -9,6 +9,7 @@ import util.RandomUtil;
 public class DeadPlant extends Entity {
 	private static final Color COLOR = Color.BLACK;
 	private static final int DECAY_CHANCE_PER_AGE = 4;
+	private static final int BASE_ENERGY = 25;
 	
 	public DeadPlant() {
 		super(Type.PLANT);
@@ -30,4 +31,9 @@ public class DeadPlant extends Entity {
 	public Color getColor() {
 		return COLOR;
 	}
+
+	@Override
+	public int getBaseEnergy() {
+		return BASE_ENERGY;
+	}		
 }

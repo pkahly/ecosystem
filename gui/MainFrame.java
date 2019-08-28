@@ -1,7 +1,9 @@
 package gui;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Toolkit;
+import javax.swing.JFrame;
 import data.world.World;
 
 @SuppressWarnings("serial")

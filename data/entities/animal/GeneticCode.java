@@ -8,42 +8,49 @@ import data.entities.Entity.Type;
 import util.RandomUtil;
 
 public class GeneticCode {
+   // Colors
 	private static final Color HERBAVORE_COLOR = new Color(250, 184, 72);
 	private static final Color OMNIVORE_COLOR = new Color(145, 135, 118);
 	private static final Color CARNIVORE_COLOR = Color.RED;
 	
+	// Initial genetics
 	private static final int SENSING_DISTANCE = 10;
 	private static final int SPEED = 1;
-	private static final int REPRODUCTION_CHANCE = 50;
-	private static final int BASE_ENERGY = 100;
+	private static final int REPRODUCTION_CHANCE = 100;
 	
 	public int sensingDistance;
 	public int speed;
 	public int reproductionChance;
-	public int baseEnergy;
 	public boolean eatsPlants;
 	public boolean eatsMeat;
 	
+	/**
+	* Create new genetics with default settings
+	*/
 	public GeneticCode() {
 		sensingDistance = SENSING_DISTANCE;
 		speed = SPEED;
 		reproductionChance = REPRODUCTION_CHANCE;
-		baseEnergy = BASE_ENERGY;
 		eatsPlants = true;
 		eatsMeat = false;
 	}	
 	
+	/**
+	* Get a child genetic code, with mutated versions of the parent's genetics
+	*/
 	public GeneticCode mutate() {
 		GeneticCode childCode = new GeneticCode();
 		childCode.sensingDistance = Math.max(2, RandomUtil.mutate(sensingDistance, 4));
 		childCode.speed = Math.max(1, RandomUtil.mutate(speed, 4));
 		childCode.reproductionChance = Math.max(0, RandomUtil.mutate(reproductionChance, 4));
-		childCode.baseEnergy = Math.max(10, RandomUtil.mutate(baseEnergy, 4));
-		//childCode.eatsPlants = RandomUtil.mutate(eatsPlants);
-		//childCode.eatsMeat = RandomUtil.mutate(eatsMeat);
+		childCode.eatsPlants = RandomUtil.mutate(eatsPlants);
+		childCode.eatsMeat = RandomUtil.mutate(eatsMeat);
 		return childCode;
 	}
 	
+	/**
+	* Returns the color, which is derived from the type
+	*/
 	public Color getColor() {
 		Type type = getType();
 		
@@ -58,6 +65,9 @@ public class GeneticCode {
 		return Color.BLACK;
 	}
 	
+	/**
+	* Classify the entity based on what it eats
+	*/
 	public Type getType() {
 		if (eatsPlants && !eatsMeat) {
 			return Type.HERBAVORE;
@@ -70,6 +80,9 @@ public class GeneticCode {
 		}
 	}
 	
+	/**
+	* Return a list of food entity types
+	*/
 	public List<Type> getFoodTypes() {
 		List<Type> foodTypes = new ArrayList<>();
 		
@@ -86,16 +99,5 @@ public class GeneticCode {
 		}
 		
 		return foodTypes;
-	}
-	
-	public String toString() {
-		String output = "";
-		output += "Sensing Distance: " + sensingDistance;
-		output += "  Speed: " + speed;
-		output += "  Reproduction Chance: " + reproductionChance;
-		output += "  Base Energy: " + baseEnergy;
-		output += "  Eats Plants: " + eatsPlants;
-		output += "  Eats Meat: " + eatsMeat;
-		return output;
 	}
 }

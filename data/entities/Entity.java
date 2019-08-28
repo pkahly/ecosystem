@@ -29,4 +29,5 @@ public abstract class Entity {
 
 	public abstract Color getColor();
 	public abstract void tick(World world, Position pos);
+	public abstract int getBaseEnergy();
 }

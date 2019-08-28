@@ -10,11 +10,17 @@ import data.world.World;
 import util.RandomUtil;
 
 public class Plant extends Entity {
+   // Color changes with age
 	private static final Color NEW_COLOR = new Color(8, 204, 60);
 	private static final Color OLD_COLOR = new Color(2, 84, 24);
+	
+	// Reproduction settings
 	private static final int ACTION_DISTANCE = 2;
 	private static final int REPRODUCTION_CHANCE = 10;
+	
+	// Death and food value settings
 	private static final int DEATH_CHANCE_PER_AGE = 1;
+	private static final int BASE_ENERGY = 25;
 	
 	public Plant() {
 		super(Type.PLANT);
@@ -51,4 +57,9 @@ public class Plant extends Entity {
 		
 		return OLD_COLOR;
 	}
+
+	@Override
+	public int getBaseEnergy() {
+		return BASE_ENERGY;
+	}		
 }

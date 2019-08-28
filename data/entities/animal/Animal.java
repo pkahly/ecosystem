@@ -9,37 +9,47 @@ import data.world.Position;
 import data.world.World;
 import util.RandomUtil;
 
-public class Herbavore extends Entity {
+public class Animal extends Entity {
+   // How close this animal must be to an object in order to interact with it
 	private static final int ACTION_DISTANCE = 1;
 
-	private final int ENERGY_USAGE;
-	private final int HUNGER_THRESHOLD;
-	private final int REPRODUCTION_COST;
+   // Energy Statistics
+	private final int BASE_ENERGY = 100;
+	private final int ENERGY_USAGE = 2;
+	private final int HUNGER_THRESHOLD = 600;
+	private final int REPRODUCTION_COST = 200;
 	
 	private GeneticCode config;
 	protected int energy;
 	
-	public Herbavore(GeneticCode config) {
+	public Animal(GeneticCode config) {
 		super(config.getType());
 		this.config = config;
-		
-		ENERGY_USAGE = (int) Math.round(getBaseEnergy() * 0.1); 
-		HUNGER_THRESHOLD = getBaseEnergy() * 2;
-		REPRODUCTION_COST = getBaseEnergy() * 4;
 	}
 	
+	/**
+	* Perform one action
+	*/
 	@Override
 	public void tick(World world, Position pos) {
+
 		if (getEnergy() < HUNGER_THRESHOLD) {
 			// Feeding
 			pos = seekFood(world, pos);
+
 		} else if (getEnergy() - REPRODUCTION_COST >= getBaseEnergy()){
+			List<Position> emptySpots = world.getNearbyPositionsOfType(pos, ACTION_DISTANCE, Type.NONE);
+			
 			// Reproduction
-			for (Position adjacentPos : world.getNearbyPositionsOfType(pos, ACTION_DISTANCE, Type.NONE)) {
-				if (RandomUtil.occurs(config.reproductionChance)) {
-					world.addOrReplace(new Herbavore(config.mutate()), adjacentPos);
-					subtractEnergy(REPRODUCTION_COST);
-				}
+			if (!emptySpots.isEmpty() && RandomUtil.occurs(config.reproductionChance)) {
+			   // Choose a spot
+   			Position adjacentPos = RandomUtil.choosePos(emptySpots);
+   			
+            // Add a new Animal in that spot   			
+				world.addOrReplace(new Animal(config.mutate()), adjacentPos);
+				
+				// Deduct the energy needed to create the new Animal
+				subtractEnergy(REPRODUCTION_COST);
 			}
 		}
 		
@@ -67,12 +77,7 @@ public class Herbavore extends Entity {
 		}
 		
 		// Move toward food
-		List<Position> food = new ArrayList<>();
-		
-		for (Position adjacentPos : world.getNearbyPositionsOfType(pos, config.sensingDistance, config.getFoodTypes())) {
-			food.add(adjacentPos);
-		}
-		
+		List<Position> food = world.getNearbyPositionsOfType(pos, config.sensingDistance, config.getFoodTypes());
 		Position closestFood = pos.findClosestPoint(food);
 				
 		if (closestFood != null) {
@@ -88,17 +93,7 @@ public class Herbavore extends Entity {
 	}
 
 	private void eatEntity(Entity food) {
-		if (food.type == Type.PLANT) {
-			addEnergy(200);
-		} else if (food.type == Type.HERBAVORE) {
-			addEnergy(1000);
-		} else if (food.type == Type.CORPSE) {
-			addEnergy(1000);
-		} else if (food.type == Type.OMNIVORE) {
-			addEnergy(5000);
-		} else {
-			throw new RuntimeException("Invalid food type: " + food.type);
-		}
+		addEnergy(food.getBaseEnergy());
 	}
 
 	@Override
@@ -114,8 +109,9 @@ public class Herbavore extends Entity {
 		energy += newEnergy;
 	}
 	
-	protected int getBaseEnergy() {
-		return config.baseEnergy;
+	@Override
+	public int getBaseEnergy() {
+		return BASE_ENERGY;
 	}
 
 	public void subtractEnergy(int energySpent) {

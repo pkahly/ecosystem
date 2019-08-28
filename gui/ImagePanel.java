@@ -20,7 +20,7 @@ public class ImagePanel extends JPanel implements ActionListener {
 	public ImagePanel(World world) {
 		this.world = world;
 		
-		// Start solver timer
+		// Start main loop
 		timer = new Timer(TICK, this);
 		timer.setActionCommand("TIMER");
 		timer.setCoalesce(true);
