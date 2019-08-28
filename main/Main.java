@@ -14,6 +14,9 @@ public class Main {
 	private static final int HEIGHT = 100;
 	private static final int WIDTH = HEIGHT * 2;
 	
+	// Probability of adding a plant to an empty square
+	private static final int REFOREST_CHANCE = 1;
+	
 	// Initial number of entities to add
 	private static final int PLANTS = WIDTH * 10;
 	private static final int ANIMALS = 100;
@@ -21,7 +24,7 @@ public class Main {
 	
 	public static void main(String[] args) {
 		// Create world
-		World world = new World(HEIGHT, WIDTH);
+		World world = new World(HEIGHT, WIDTH, REFOREST_CHANCE);
 		
 		// Add plants
 		for (int i = 0; i < PLANTS; i++) {

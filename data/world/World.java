@@ -14,20 +14,19 @@ import data.entities.plant.Plant;
 import util.RandomUtil;
 
 public class World {
-   // Probability of adding a plant to an empty square
-	private static final int REFOREST_CHANCE = 1;
-	
 	private int height;
 	private int width;
 	private Entity[][] worldArray;
+	private int reforestChance;
 
    /**
    * Initialize an empty world of the given size
    */
-	public World(int height, int width) {
+	public World(int height, int width, int reforestChance) {
 		this.height = height;
 		this.width = width;		
 		worldArray = new Entity[height][width];
+		this.reforestChance = reforestChance;
 	}
 	
 	/**
@@ -44,7 +43,7 @@ public class World {
 				if (entity != null && !processed.contains(entity)) {
 					processed.add(entity);
 					entity.tick(this, pos);
-				} else if (RandomUtil.occurs(REFOREST_CHANCE)) {
+				} else if (RandomUtil.occurs(reforestChance)) {
 					addOrReplace(new Plant(), pos);
 				}
 			}

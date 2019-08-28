@@ -10,17 +10,15 @@ import util.RandomUtil;
 public class GeneticCode {
    // Colors
 	private static final Color HERBAVORE_COLOR = new Color(250, 184, 72);
-	private static final Color OMNIVORE_COLOR = new Color(145, 135, 118);
+	private static final Color OMNIVORE_COLOR = new Color(247, 106, 226);
 	private static final Color CARNIVORE_COLOR = Color.RED;
 	
 	// Initial genetics
 	private static final int SENSING_DISTANCE = 10;
 	private static final int SPEED = 1;
-	private static final int REPRODUCTION_CHANCE = 100;
 	
 	public int sensingDistance;
 	public int speed;
-	public int reproductionChance;
 	public boolean eatsPlants;
 	public boolean eatsMeat;
 	
@@ -30,7 +28,6 @@ public class GeneticCode {
 	public GeneticCode() {
 		sensingDistance = SENSING_DISTANCE;
 		speed = SPEED;
-		reproductionChance = REPRODUCTION_CHANCE;
 		eatsPlants = true;
 		eatsMeat = false;
 	}	
@@ -42,9 +39,15 @@ public class GeneticCode {
 		GeneticCode childCode = new GeneticCode();
 		childCode.sensingDistance = Math.max(2, RandomUtil.mutate(sensingDistance, 4));
 		childCode.speed = Math.max(1, RandomUtil.mutate(speed, 4));
-		childCode.reproductionChance = Math.max(0, RandomUtil.mutate(reproductionChance, 4));
+
 		childCode.eatsPlants = RandomUtil.mutate(eatsPlants);
 		childCode.eatsMeat = RandomUtil.mutate(eatsMeat);
+		
+		// Child must eat something
+		if (!eatsPlants && !eatsMeat) {
+		   eatsPlants = true;
+		}
+		
 		return childCode;
 	}
 	
