@@ -9,8 +9,9 @@ import java.awt.image.WritableRaster;
 import data.world.World;
 
 public class ImageUtil {
+
 	/**
-	 * Get image for given world 
+	 * Get a pixel image of the given world 
 	 */
 	public static BufferedImage createImage(World world) {
 		if (world == null) {

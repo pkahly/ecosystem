@@ -15,9 +15,9 @@ public class Animal extends Entity {
 
    // Energy Statistics
 	private final int BASE_ENERGY = 100;
-	private final int ENERGY_USAGE = 2;
-	private final int HUNGER_THRESHOLD = 600;
-	private final int REPRODUCTION_COST = 200;
+	private final int ENERGY_USAGE = BASE_ENERGY / 10;
+	private final int HUNGER_THRESHOLD = BASE_ENERGY * 10;
+	private final int REPRODUCTION_COST = BASE_ENERGY * 2;
 	
 	private GeneticCode config;
 	protected int energy;
@@ -33,14 +33,14 @@ public class Animal extends Entity {
 	@Override
 	public void tick(World world, Position pos) {
 
+		// Feeding
 		if (getEnergy() < HUNGER_THRESHOLD) {
-			// Feeding
 			pos = seekFood(world, pos);
 
+      // Reproduction
 		} else if (getEnergy() - REPRODUCTION_COST >= getBaseEnergy()){
 			List<Position> emptySpots = world.getNearbyPositionsOfType(pos, ACTION_DISTANCE, Type.NONE);
 			
-			// Reproduction
 			if (!emptySpots.isEmpty() && RandomUtil.occurs(config.reproductionChance)) {
 			   // Choose a spot
    			Position adjacentPos = RandomUtil.choosePos(emptySpots);
@@ -54,8 +54,7 @@ public class Animal extends Entity {
 		}
 		
 		// Energy Usage
-		double abilityScore = (config.speed + (config.sensingDistance / 10.0));
-		subtractEnergy((int) Math.round(ENERGY_USAGE * abilityScore));
+		subtractEnergy(ENERGY_USAGE);
 		
 		// Death
 		if (getEnergy() <= 0) {
